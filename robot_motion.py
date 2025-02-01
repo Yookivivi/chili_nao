@@ -1,112 +1,59 @@
 import time
-from proxy import motionProxy, postureProxy, motion
+from proxy import postureProxy, motion
 
+# Example Function to make NAO stand up
+def stand_up():
+    motion.wakeUp()  # Activate NAO's motors
+    postureProxy.goToPosture("Crouch", 0.5)  # Transition through a crouch for stability
+    time.sleep(2)  # Allow time for balance
+    postureProxy.goToPosture("Stand", 0.5)   # Move to standing posture
+    print("Nao has safely stood up.")
+
+# Example Function to make NAO sit down
+def sit():
+    motion.wakeUp()  # Activate NAO's motors
+    postureProxy.goToPosture("Sit", 0.5)  # Move to sitting posture
+    print("Nao has safely sat down.")
+
+
+# Example Function to make NAO wave its hand
 def wave_hand():
-    # Lift the right arm
+    # Lift the right arm to prepare for waving
     motion.angleInterpolationWithSpeed("RShoulderPitch", -0.5, 0.2)  # Arm up
-    motion.angleInterpolationWithSpeed("RElbowYaw", 1.5, 0.2)         # Elbow out
-    
-    # Wave by rotating the wrist
-    for _ in range(3):
+    motion.angleInterpolationWithSpeed("RElbowYaw", 1.5, 0.2)         # Elbow out to the side
+
+    # Perform the waving motion by rotating the wrist back and forth
+    for _ in range(3):  # Repeat 3 times for a waving gesture
         motion.angleInterpolationWithSpeed("RWristYaw", -1.0, 0.2)  # Rotate hand outward
         motion.angleInterpolationWithSpeed("RWristYaw", 1.0, 0.2)   # Rotate hand inward
 
-    # Return arm to resting position
+    # Return the arm to its resting position
     motion.angleInterpolationWithSpeed("RShoulderPitch", 1.5, 0.2)  # Arm down
     motion.angleInterpolationWithSpeed("RElbowYaw", 0.0, 0.2)       # Elbow back in
     motion.angleInterpolationWithSpeed("RWristYaw", 0.0, 0.2)       # Wrist to neutral
 
-
+# Example Function to make NAO nod its head
 def nod_head():
-    # Nod head motion
-    motionProxy.setStiffnesses("Head", 1.0)
+    motion.setStiffnesses("Head", 1.0)  # Enable head movement
 
-    names = ["HeadPitch"]
-    angles = [0.2, -0.2]  # Nod down and up
-    times = [1.0, 2.0]  # Timing for nodding
-    isAbsolute = True
+    names = ["HeadPitch"]               # Define the joint for nodding
+    angles = [0.2, -0.2]                # Nod down and then up
+    times = [1.0, 2.0]                  # Timing for the nod motion
+    isAbsolute = True                   # Move to absolute angles
 
-    # Perform head nod
-    motionProxy.angleInterpolation(names, angles, times, isAbsolute)
-    motionProxy.setStiffnesses("Head", 0.0)
+    # Perform head nodding motion
+    motion.angleInterpolation(names, angles, times, isAbsolute)
+    motion.setStiffnesses("Head", 0.0)  # Relax the head after nodding
 
-def stand_up():
-    # Make the robot stand straight
-    # postureProxy.goToPosture("StandInit", 0.5)
-    motion.wakeUp()
-# Final transition to the standing posture
-    # postureProxy.goToPosture("Stand", 0.5)  # Go to "Stand" posture with gradual speed
-
-    postureProxy.goToPosture("Crouch", 0.5)  # Use "Sit" posture for a more stable position
-    time.sleep(2)
-    postureProxy.goToPosture("Stand", 0.5)  # Use "Sit" posture for a more stable position
-
-
-    print("Nao has safely stood up.")
-
-
-# Execute the function
-
-# Introduce Nao with natural body language
+# Example Function to introduce NAO with natural body language
 def introduce_nao():
+    motion.angleInterpolationWithSpeed("HeadYaw", 0.3, 0.2)          # Small, friendly head tilt
+    motion.angleInterpolationWithSpeed("RShoulderPitch", 1.0, 0.2)  # Slightly raise right arm for a welcoming gesture
 
-    #tts.say("Hello! My name is Nao. I heard your are a great teacher. so I'm here to learn English pronunciation with you.")
-    motion.angleInterpolationWithSpeed("HeadYaw", 0.3, 0.2)  # Small head tilt
-    motion.angleInterpolationWithSpeed("RShoulderPitch", 1.0, 0.2)  # Lift right arm slightly
-    #time.sleep(1)
-
+# Example Function for a celebration gesture
 def celebration():
-#    # Raise both arms at the same time
-#     motion.angleInterpolationWithSpeed(["LShoulderPitch", "RShoulderPitch"], [-0.5, -0.5], 0.2)  # Arms up
-#     motion.angleInterpolationWithSpeed(["LElbowYaw", "RElbowYaw"], [-1.5, 1.5], 0.2)  # Elbows out
-
-#     # Wave both hands simultaneously
-#     for _ in range(3):
-#         motion.angleInterpolationWithSpeed(["LWristYaw", "RWristYaw"], [-1.0, -1.0], 0.2)  # Hands outward
-#         motion.angleInterpolationWithSpeed(["LWristYaw", "RWristYaw"], [1.0, 1.0], 0.2)   # Hands inward
-
-#     # Lower both arms at the same time
-#     motion.angleInterpolationWithSpeed(["LShoulderPitch", "RShoulderPitch"], [1.5, 1.5], 0.2)  # Arms down
-#     motion.angleInterpolationWithSpeed(["LElbowYaw", "RElbowYaw"], [0.0, 0.0], 0.2)  # Elbows neutral
-#     motion.angleInterpolationWithSpeed(["LWristYaw", "RWristYaw"], [0.0, 0.0], 0.2)  # Wrists neutral
-    #  Raise both arms
-    make_nao_sit()
-    motion.angleInterpolationWithSpeed(["LShoulderPitch", "RShoulderPitch"], [-0.5, -0.5], 0.2)  # Arms up
-    motion.angleInterpolationWithSpeed(["LElbowYaw", "RElbowYaw"], [-1.5, 1.5], 0.2)  # Elbows out
-
-    # Lower elbows
-    # motion.angleInterpolationWithSpeed(["LElbowRoll", "RElbowRoll"], [-1.5, 1.5], 0.3)  # Elbows down
-    time.sleep(0.3)
-
-    # Raise elbows back up
-    # motion.angleInterpolationWithSpeed(["LElbowRoll", "RElbowRoll"], [-0.5, -0.5], 0.1)  # Elbows up
-    # time.sleep(0.3)
-        # # motion.angleInterpolationWithSpeed(["LElbowYaw", "RElbowYaw"], [0.0, 0.0], 0.2)  # Elbows neutral
-    # # motion.angleInterpolationWithSpeed(["LElbowRoll", "RElbowRoll"], [0.0, 0.0], 0.2)  # Wrists neutral
-
-    # Lower arms back to neutral
-    # motion.angleInterpolationWithSpeed(["LElbowRoll", "LElbowRoll"], [1.5, -1.5], 0.2)  # Elbows neutral
-    # motion.angleInterpolationWithSpeed(["LShoulderPitch", "RShoulderPitch"], [0.4, 0.4], 0.2)  # Arms down
-    # # motion.angleInterpolationWithSpeed(["LElbowRoll", "RElbowRoll"], [0.0, 0.0], 0.2)  # Wrists neutral
-
-    postureProxy.goToPosture("Sit", 0.5)  # Use "Sit" posture for a more stable position
-
-
-
-# Main sequence for interaction
-def interaction_sequence():
-    # Start by making the robot stand up straight
-    # stand_up()
-
-    # Add a greeting wave
-    make_nao_sit()
-    time.sleep(2)
-    wave_hand()
-    time.sleep(7)
-    make_nao_sit()
-    # nod_head()
-
-def make_nao_sit():
-    motion.wakeUp()
-    postureProxy.goToPosture("Sit", 0.5)
-    print("Nao has safely sat down.")
+    sit()  # Start in a seated position for stability
+    motion.angleInterpolationWithSpeed(["LShoulderPitch", "RShoulderPitch"], [-0.5, -0.5], 0.2)  # Raise both arms in celebration
+    motion.angleInterpolationWithSpeed(["LElbowYaw", "RElbowYaw"], [-1.5, 1.5], 0.2)             # Elbows out to create an expressive pose
+    time.sleep(0.3)  # Brief pause to emphasize the pose
+    postureProxy.goToPosture("Sit", 0.5)  # Return to a stable sitting position

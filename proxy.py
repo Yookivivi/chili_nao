@@ -1,69 +1,99 @@
-#import sys
-#sys.path.append('/Users/yujingzhang/Documents/nao/pynaoqi-python2.7-2.8.6.23-mac64-20191127_144231/lib/python2.7/site-packages')
-#import naoqi
 from naoqi import ALProxy
 
-username = 'nao'  # Username for Nao robot
-password = 'naotravelstochili'  # Password for Nao robot (if applicable)
+# ============================
+# Robot Configuration
+# ============================
 
-PEPPER_IP = "192.168.1.117"  # Replace with Pepper's IP
-PEPPER_PORT = 9559
+# Replace with your robot's credentials if needed
+username = 'nao'                 # NAO's username (used for CHILI Nao, if applicable)
+password = 'naotravelstochili'    # NAO's password (used for CHILI Nao, if applicable)
 
+# Replace with Pepper's IP address and port
+PEPPER_IP = "192.168.1.117"       # Robot's IP address
+PEPPER_PORT = 9559                # NAOqi's default communication port
 
-# Initialize proxies for required services
-# tts = ALProxy("ALTextToSpeech", PEPPER_IP, PEPPER_PORT)
-# dialog = ALProxy("ALDialog", PEPPER_IP, PEPPER_PORT)
-motion = ALProxy("ALMotion", PEPPER_IP, PEPPER_PORT)
-memory = ALProxy("ALMemory", PEPPER_IP, PEPPER_PORT)
-# Speech recognition setup (Optional Extension)
-# asr = ALProxy("ALSpeechRecognition", PEPPER_IP, PEPPER_PORT)
-#asr.unsubscribe("Test_ASR")
-# asr.setLanguage("English")
-# vocab = ["yes", "no", "hello", "start"]
-# asr.pause(True)
-# asr.setVocabulary(vocab, True)
+# ============================
+# Basic Connection Test (Optional)
+# ============================
 
-# Initialize proxies
+# Uncomment to verify the connection and NAOqi version
+# proxy = ALProxy("ALSystem", PEPPER_IP, PEPPER_PORT)
+# print(proxy.systemVersion())  # Displays the NAOqi version running on the robot
+
+# ============================
+# Motion and Posture Control
+# ============================
+
+# Establish connections to key motion-related services
+motion = ALProxy("ALMotion", PEPPER_IP, PEPPER_PORT)      # Controls robot's body movements
+memory = ALProxy("ALMemory", PEPPER_IP, PEPPER_PORT)      # Accesses the robot's memory (e.g., sensor data)
+postureProxy = ALProxy("ALRobotPosture", PEPPER_IP, PEPPER_PORT)  # Manages robot's postures
+
+# ============================
+# Face Tracking Setup
+# ============================
+
+# Setup face tracking
 tracker = ALProxy("ALTracker", PEPPER_IP, PEPPER_PORT)
-# # Set the mode to "Move" to adjust body position while tracking
-tracker.setMode("Head")
-# Start tracking the face
-tracker.registerTarget("Face", 1)  # 1 is the face size estimation in meters
-tracker.track("Face")
+tracker.registerTarget("Face", 1)      # Registers "Face" as the tracking target (1 = approximate face size in meters)
+tracker.track("Face")                  # Starts tracking the registered face
+tracker.setMode("Head")                 # Makes only the head move to track the face
+motion.setStiffnesses("Head", 1.0)     # Ensures the head is active and responsive
 
-motion.setStiffnesses("Head", 1.0)  # Ensure head movement is active
-print("Nao is now tracking the user's face.")
+print("NAO is now tracking the user's face.")
 
-# Connect to the ALAutonomousLife service
+# ============================
+# Disable Autonomous Behaviors
+# ============================
+
+# Disabling built-in autonomous reactions to have full control over the robot
 autonomous_life = ALProxy("ALAutonomousLife", PEPPER_IP, PEPPER_PORT)
+autonomous_life.setState("disabled")   # Turns off autonomous life features
 
-# Set the robot to "disabled" state
-autonomous_life.setState("disabled")
-
-speech_recognition = ALProxy("ALSpeechRecognition", PEPPER_IP, PEPPER_PORT)
-speech_recognition.pause(True)
-
-# Connect to ALBasicAwareness
+# Stop basic awareness (like automatic head movements to sounds)
 basic_awareness = ALProxy("ALBasicAwareness", PEPPER_IP, PEPPER_PORT)
+basic_awareness.stopAwareness()        # Stops the robot's basic awareness module
 
-# Stop all basic awareness behaviors
-basic_awareness.stopAwareness()
+# ============================
+# Audio Configuration
+# ============================
 
-print("Autonomous Life disabled.")
-
+# Audio device proxy to control input/output volume
 audio = ALProxy("ALAudioDevice", PEPPER_IP, PEPPER_PORT)
-# # Set the input volume for the microphone
-audio.closeAudioInputs()
-print("Audio inputs are now disabled (microphone off).")
+audio.closeAudioInputs()               # Disables microphones to prevent the robot from listening
 
-# print("Microphone channels are enabled and volume is set.")
-
-audio_recorder = ALProxy("ALAudioRecorder",  PEPPER_IP, PEPPER_PORT)
+# Stop any ongoing microphone recordings
+audio_recorder = ALProxy("ALAudioRecorder", PEPPER_IP, PEPPER_PORT)
 audio_recorder.stopMicrophonesRecording()
+
+# Manage audio playback settings
 audio_player = ALProxy("ALAudioPlayer", PEPPER_IP, PEPPER_PORT)
-audio.setOutputVolume(100)
+audio.setOutputVolume(100)             # Sets speaker volume (0-100)
+
+# ============================
+# (Optional) Speech Capabilities
+# ============================
+
+# Uncomment if you need text-to-speech or dialog capabilities
+# tts = ALProxy("ALTextToSpeech", PEPPER_IP, PEPPER_PORT)  # Enables text-to-speech
+# dialog = ALProxy("ALDialog", PEPPER_IP, PEPPER_PORT)     # Dialog system for conversation-like interactions
+
+# ============================
+# (Optional) Speech Recognition
+# ============================
+
+# Uncomment if you want the robot to recognize specific words
+# asr = ALProxy("ALSpeechRecognition", PEPPER_IP, PEPPER_PORT)
+# asr.unsubscribe("Test_ASR")                 # Clean slate for ASR
+# asr.setLanguage("English")                 # Set language for recognition
+# vocab = ["yes", "no", "hello", "start"]    # Words to recognize
+# asr.pause(True)                            # Pause before setting vocabulary
+# asr.setVocabulary(vocab, True)             # Set vocabulary (True = word spotting enabled)
+
+# ============================
+# (Optional) Microphone Volume Control
+# ============================
+
+# Uncomment to adjust microphone sensitivity
 # audio_device = ALProxy("ALAudioDevice", PEPPER_IP, PEPPER_PORT)
-# audio_device.setInputVolume(0)
-# Proxies for movement and speech
-motionProxy = ALProxy("ALMotion", PEPPER_IP, PEPPER_PORT)
-postureProxy = ALProxy("ALRobotPosture", PEPPER_IP, PEPPER_PORT)
+# audio_device.setInputVolume(0)  # Set mic input volume (0 = mute, 100 = max)

@@ -42,6 +42,6 @@ def transfer_file_from_nao(nao_path, local_path, nao_ip, nao_username, nao_passw
         ssh.close()
 
 # Example usage
-# remote_audio_path = "/home/nao/audio/wav/lbt_pre_1.wav"
-# transfer_file_to_nao("audio_file/lbt_pre_1.wav", remote_audio_path, PEPPER_IP, username, password)
-# audio_player.playFile(remote_audio_path)
+remote_audio_path = "/home/nao/audio/wav/lbt_pre_1.wav"
+transfer_file_to_nao("lbt_pre_1.wav", remote_audio_path, PEPPER_IP, username, password)
+audio_player.playFile(remote_audio_path)

@@ -57,3 +57,8 @@ def celebration():
     motion.angleInterpolationWithSpeed(["LElbowYaw", "RElbowYaw"], [-1.5, 1.5], 0.2)             # Elbows out to create an expressive pose
     time.sleep(0.3)  # Brief pause to emphasize the pose
     postureProxy.goToPosture("Sit", 0.5)  # Return to a stable sitting position
+
+# Example: Nao sitdown and celebrate
+sit()
+time.sleep(2)
+celebration()

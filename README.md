@@ -24,7 +24,16 @@ import naoqi
 
 ---
 
-## Basic Control
+### NAO Turn-on and Turn-off
+
+Although the official documentation states that turning on the robot requires a short click on the chest button ([NAO Turn-on Guide](http://doc.aldebaran.com/2-8/family/nao_user_guide/nao-turn-on.html)), the NAO robot in the CHILI lab requires a long press of the chest button until the LED lights turn on.
+
+After that, wait approximately 3-4 minutes (sometimes longer if there are updates in progress; for detailed information, refer to the [NAO Boot Process Guide](http://doc.aldebaran.com/2-8/family/nao_user_guide/boot_process_nao.html#boot-process-nao)).
+
+When the NAO says "OGNAK GNOUK," it has successfully powered on.
+
+To turn off the NAO, ensure it is in a safe, stable area, then long-press the chest button until all the LED lights are off.
+
 
 ### Connecting to NAO
 
